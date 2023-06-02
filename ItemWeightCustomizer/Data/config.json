@@ -52,6 +52,7 @@
     "animalParts": -1,
     "animalHides": 7.5,
     "clutter": -1,
-    "miscItems": -1
+    "miscItems": -1,
+    "ammunition": -1
   }
 }

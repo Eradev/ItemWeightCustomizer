@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
 namespace ItemWeightCustomizer
@@ -7,9 +6,9 @@ namespace ItemWeightCustomizer
     public partial class Settings
     {
         [JsonProperty("weightSettings")]
-        public WeightSettings WeightSettings { get; set; } = new WeightSettings();
+        public WeightSettings WeightSettings { get; set; } = new();
 
         [JsonProperty("categories")]
-        public HashSet<WeightCategory> Categories { get; set; } = new HashSet<WeightCategory>();
+        public HashSet<WeightCategory> Categories { get; set; } = new();
     }
 }
