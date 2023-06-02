@@ -611,9 +611,11 @@ namespace ItemWeightCustomizer
             // ***** AMMUNITION ***** //
             if (ammunitionWeight >= 0 || ActionableCategoryExists("ammunition"))
             {
-                SynthesisLog($"ammunition ???");
+                var ammunitions = state.LoadOrder.PriorityOrder.WinningOverrides<IAmmunition>();
 
-                foreach (var ammunition in state.LoadOrder.PriorityOrder.WinningOverrides<IAmmunition>())
+                SynthesisLog($"ammunition ??? {ammunitions.Count()}");
+
+                foreach (var ammunition in ammunitions)
                 {
                     SynthesisLog($"Checking {ammunition.Name}...");
                     var newWeight = FindWeightCategory("ammunition", ammunition.EditorID) ?? ammunitionWeight;
