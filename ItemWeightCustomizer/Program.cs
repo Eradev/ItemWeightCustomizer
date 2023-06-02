@@ -320,15 +320,17 @@ namespace ItemWeightCustomizer
             {
                 string[] lightBooks = { "note", "journal", "letter" };
 
-                foreach (var book in state.LoadOrder.PriorityOrder.WinningOverrides<IBookGetter>())
+                foreach (var book in
+                         state.LoadOrder.PriorityOrder.WinningOverrides<IBookGetter>().Where(x => x.Weight > 0f))
                 {
                     var newWeight = FindWeightCategory("book", book.EditorID) ?? bookWeight;
+
                     if (FindItemType(lightBooks, book.EditorID) ?? true)
                     {
                         newWeight = FindWeightCategory("notes", book.EditorID) ?? notesWeight;
                     }
-                    if (newWeight < 0 ||
-                        Math.Abs(book.Weight - newWeight) < float.Epsilon)
+
+                    if (newWeight < 0)
                     {
                         continue;
                     }
@@ -341,11 +343,11 @@ namespace ItemWeightCustomizer
             // ***** INGREDIENTS ***** //
             if (ingredientWeight >= 0 || ActionableCategoryExists("ingredients"))
             {
-                foreach (var ingredient in state.LoadOrder.PriorityOrder.WinningOverrides<IIngredientGetter>())
+                foreach (var ingredient in
+                         state.LoadOrder.PriorityOrder.WinningOverrides<IIngredientGetter>().Where(x => x.Weight > 0f))
                 {
                     var newWeight = FindWeightCategory("ingredients", ingredient.EditorID) ?? ingredientWeight;
-                    if (newWeight < 0 || 
-                        Math.Abs(ingredient.Weight - newWeight) < float.Epsilon)
+                    if (newWeight < 0)
                     {
                         continue;
                     }
@@ -358,11 +360,12 @@ namespace ItemWeightCustomizer
             // ***** SCROLLS ***** //
             if (scrollWeight >= 0 || ActionableCategoryExists("scrolls"))
             {
-                foreach (var scroll in state.LoadOrder.PriorityOrder.WinningOverrides<IScrollGetter>())
+                foreach (var scroll in
+                         state.LoadOrder.PriorityOrder.WinningOverrides<IScrollGetter>().Where(x => x.Weight > 0f))
                 {
                     var newWeight = FindWeightCategory("scrolls", scroll.EditorID) ?? scrollWeight;
 
-                    if (newWeight < 0 || Math.Abs(scroll.Weight - newWeight) < float.Epsilon)
+                    if (newWeight < 0)
                     {
                         continue;
                     }
@@ -375,10 +378,11 @@ namespace ItemWeightCustomizer
             // ***** SOUL GEMS ***** //
             if (soulGemWeight >= 0 || ActionableCategoryExists("soulgems"))
             {
-                foreach (var soulGem in state.LoadOrder.PriorityOrder.WinningOverrides<ISoulGemGetter>())
+                foreach (var soulGem in
+                         state.LoadOrder.PriorityOrder.WinningOverrides<ISoulGemGetter>().Where(x => x.Weight > 0f))
                 {
                     var newWeight = FindWeightCategory("soulgems", soulGem.EditorID) ?? soulGemWeight;
-                    if (newWeight < 0 || Math.Abs(soulGem.Weight - newWeight) < float.Epsilon)
+                    if (newWeight < 0)
                     {
                         continue;
                     }
@@ -398,7 +402,8 @@ namespace ItemWeightCustomizer
                 clothesBodyWeight >= 0 || ActionableCategoryExists("clothesBody")
                 )
             {
-                foreach (var armor in state.LoadOrder.PriorityOrder.WinningOverrides<IArmorGetter>())
+                foreach (var armor in
+                         state.LoadOrder.PriorityOrder.WinningOverrides<IArmorGetter>().Where(x => x.Weight > 0f))
                 {
                     var newWeight = FindWeightCategory("armors", armor.EditorID) ?? armorWeight;
 
@@ -437,8 +442,7 @@ namespace ItemWeightCustomizer
                             newWeight = FindWeightCategory("clothesBody", armor.EditorID) ?? clothesBodyWeight;
                         }
                     }
-                    if (newWeight < 0 ||
-                        Math.Abs(armor.Weight - newWeight) < float.Epsilon)
+                    if (newWeight < 0)
                     {
                         continue;
                     }
@@ -451,12 +455,12 @@ namespace ItemWeightCustomizer
             // ***** WEAPONS ***** //
             if (weaponWeight >= 0 || ActionableCategoryExists("weapons"))
             {
-                foreach (var weapon in state.LoadOrder.PriorityOrder.WinningOverrides<IWeaponGetter>())
+                foreach (var weapon in
+                         state.LoadOrder.PriorityOrder.WinningOverrides<IWeaponGetter>().Where(x => x.BasicStats?.Weight > 0f))
                 {
                     var newWeight = FindWeightCategory("weapons", weapon.EditorID) ?? weaponWeight;
 
-                    if (newWeight < 0 ||
-                        (weapon.BasicStats != null && Math.Abs(weapon.BasicStats.Weight - newWeight) < float.Epsilon))
+                    if (newWeight < 0)
                     {
                         continue;
                     }
@@ -482,7 +486,8 @@ namespace ItemWeightCustomizer
                 string[] breads = { "bread", "flour" };
                 string[] soups = { "soup", "stew", "chowder", "porridge" };
 
-                foreach (var ingestible in state.LoadOrder.PriorityOrder.WinningOverrides<IIngestibleGetter>())
+                foreach (var ingestible in
+                         state.LoadOrder.PriorityOrder.WinningOverrides<IIngestibleGetter>().Where(x => x.Weight > 0f))
                 {
                     float newWeight = -1;
                     if (ingestible.Keywords?.Any(link => link.FormKey.Equals(VendorItemFood.FormKey)) ?? false)
@@ -524,8 +529,7 @@ namespace ItemWeightCustomizer
                         newWeight = FindWeightCategory("potions", ingestible.EditorID) ?? potionWeight;
                     }
 
-                    if (newWeight < 0 ||
-                        Math.Abs(ingestible.Weight - newWeight) < float.Epsilon)
+                    if (newWeight < 0)
                     {
                         continue;
                     }
@@ -548,7 +552,8 @@ namespace ItemWeightCustomizer
                 tentsWeight >= 0 || ActionableCategoryExists("tents") ||
                 miscWeight >= 0 || ActionableCategoryExists("miscItems"))
             {
-                foreach (var item in state.LoadOrder.PriorityOrder.WinningOverrides<IMiscItemGetter>())
+                foreach (var item in
+                         state.LoadOrder.PriorityOrder.WinningOverrides<IMiscItemGetter>().Where(x => x.Weight > 0f))
                 {
                     state.LinkCache.TryResolve<IKeywordGetter>(Campfire.MakeFormKey(IsCampfireTentItem.Id), out var key);
                     float newWeight = -1;
@@ -597,8 +602,7 @@ namespace ItemWeightCustomizer
                         newWeight = FindWeightCategory("miscItems", item.EditorID) ?? miscWeight;
                     }
 
-                    if (newWeight < 0 ||
-                        Math.Abs(item.Weight - newWeight) < float.Epsilon)
+                    if (newWeight < 0)
                     {
                         continue;
                     }
@@ -611,25 +615,17 @@ namespace ItemWeightCustomizer
             // ***** AMMUNITION ***** //
             if (ammunitionWeight >= 0 || ActionableCategoryExists("ammunition"))
             {
-                var ammunitions = state.LoadOrder.PriorityOrder.WinningOverrides<IAmmunitionGetter>();
-
-                SynthesisLog($"ammunition ??? {ammunitions.Count()}");
-
-                foreach (var ammunition in state.LoadOrder.PriorityOrder.WinningOverrides<IAmmunitionGetter>())
+                foreach (var ammunition in
+                         state.LoadOrder.PriorityOrder.WinningOverrides<IAmmunitionGetter>().Where(x => x.Weight > 0f))
                 {
-                    SynthesisLog($"Checking {ammunition.Name}...");
                     var newWeight = FindWeightCategory("ammunition", ammunition.EditorID) ?? ammunitionWeight;
-                    if (newWeight < 0 || Math.Abs(ammunition.Weight - newWeight) < float.Epsilon)
+                    if (newWeight < 0)
                     {
-                        SynthesisLog($"0 or too low");
-
                         continue;
                     }
 
                     var modifiedAmmunition = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammunition);
                     modifiedAmmunition.Weight *= newWeight;
-
-                    SynthesisLog($"New weight {newWeight}");
                 }
             }
 
