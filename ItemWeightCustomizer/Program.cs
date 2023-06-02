@@ -449,26 +449,11 @@ namespace ItemWeightCustomizer
             }
 
             // ***** WEAPONS ***** //
-            // ***** AMMUNITION ***** //
-            if (weaponWeight >= 0 || ActionableCategoryExists("weapons") ||
-                ammunitionWeight >= 0 || ActionableCategoryExists("ammunition"))
+            if (weaponWeight >= 0 || ActionableCategoryExists("weapons"))
             {
-                string[] ammunition = {"arrow", "bolt", "throwing"};
-
                 foreach (var weapon in state.LoadOrder.PriorityOrder.WinningOverrides<IWeaponGetter>())
                 {
-                    float newWeight = -1;
-
-                    if (FindItemType(ammunition, weapon.EditorID) ?? false)
-                    {
-                        SynthesisLog($"Found ammunition: {weapon.Name}");
-
-                        newWeight = FindWeightCategory("ammunition", weapon.EditorID) ?? ammunitionWeight;
-                    }
-                    else
-                    {
-                        newWeight = FindWeightCategory("weapons", weapon.EditorID) ?? weaponWeight;
-                    }
+                    var newWeight = FindWeightCategory("weapons", weapon.EditorID) ?? weaponWeight;
 
                     if (newWeight < 0 ||
                         (weapon.BasicStats != null && Math.Abs(weapon.BasicStats.Weight - newWeight) < float.Epsilon))
@@ -620,6 +605,31 @@ namespace ItemWeightCustomizer
 
                     var modifiedItem = state.PatchMod.MiscItems.GetOrAddAsOverride(item);
                     modifiedItem.Weight *= newWeight;
+                }
+            }
+
+            // ***** AMMUNITION ***** //
+            if (ammunitionWeight >= 0 || ActionableCategoryExists("ammunition"))
+            {
+                var ammunitions = state.LoadOrder.PriorityOrder.WinningOverrides<IAmmunitionGetter>();
+
+                SynthesisLog($"ammunition ??? {ammunitions.Count()}");
+
+                foreach (var ammunition in state.LoadOrder.PriorityOrder.WinningOverrides<IAmmunitionGetter>())
+                {
+                    SynthesisLog($"Checking {ammunition.Name}...");
+                    var newWeight = FindWeightCategory("ammunition", ammunition.EditorID) ?? ammunitionWeight;
+                    if (newWeight < 0 || Math.Abs(ammunition.Weight - newWeight) < float.Epsilon)
+                    {
+                        SynthesisLog($"0 or too low");
+
+                        continue;
+                    }
+
+                    var modifiedAmmunition = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammunition);
+                    modifiedAmmunition.Weight *= newWeight;
+
+                    SynthesisLog($"New weight {newWeight}");
                 }
             }
 
