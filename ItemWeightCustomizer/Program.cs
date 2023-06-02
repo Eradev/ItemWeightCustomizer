@@ -613,19 +613,17 @@ namespace ItemWeightCustomizer
             {
                 foreach (var ammunition in state.LoadOrder.PriorityOrder.WinningOverrides<IAmmunition>())
                 {
+                    SynthesisLog($"Checking {ammunition.Name}...");
                     var newWeight = FindWeightCategory("ammunition", ammunition.EditorID) ?? ammunitionWeight;
-                    if (newWeight < 0 || newWeight == ammunition.Weight)
-                    {
-                        continue;
-                    }
-
-                    if (Math.Abs(ammunition.Weight - newWeight) < float.Epsilon)
+                    if (newWeight < 0 || Math.Abs(ammunition.Weight - newWeight) < float.Epsilon)
                     {
                         continue;
                     }
 
                     var modifiedAmmunition = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammunition);
                     modifiedAmmunition.Weight *= newWeight;
+
+                    SynthesisLog($"New weight {newWeight}");
                 }
             }
 
